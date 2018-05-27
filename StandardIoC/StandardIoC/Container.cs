@@ -8,10 +8,17 @@
     public class Container
     {
         private readonly Dictionary<Type, Type> _mapping = new Dictionary<Type, Type>();
+        private readonly Dictionary<Type, object> _instances = new Dictionary<Type, object>();
 
         public void Register<TConcrete>()
         {
             _mapping.Add(typeof(TConcrete), typeof(TConcrete));
+        }
+
+        public void Register<T>(object exisitingInstance)
+        {
+            _mapping.Add(typeof(T), exisitingInstance.GetType());
+            _instances.Add(exisitingInstance.GetType(), exisitingInstance);
         }
 
         public void Register<TAbstract,TConcrete>() where TConcrete : TAbstract
@@ -33,6 +40,11 @@
             if (_mapping.TryGetValue(type, out Type concreteType))
             {
                 typeToInstantiate = concreteType;
+            }
+
+            if (_instances.TryGetValue(typeToInstantiate, out object existingInstance))
+            {
+                return existingInstance;
             }
 
             ConstructorInfo constructor = typeToInstantiate.GetConstructors().Single();
