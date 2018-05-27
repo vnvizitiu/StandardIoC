@@ -2,8 +2,6 @@
 {
     using NUnit.Framework;
     
-    using StandardIoC;
-    
     [TestFixture]
     public class DefaultConstructorTests
     {
